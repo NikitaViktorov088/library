@@ -1,12 +1,33 @@
 import json
 import logging
 from typing import List
+from abc import ABC, abstractmethod
 
 
 logger = logging.getLogger("LibraryLogger")
 
 
-class JsonStorage:
+class BaseStorage(ABC):
+    """
+    Абстрактный базовый класс для хранилищ данных.
+    """
+
+    @abstractmethod
+    def read(self) -> List[dict]:
+        """
+        Чтение данных из хранилища.
+        """
+        pass
+
+    @abstractmethod
+    def write(self, data: List[dict]) -> None:
+        """
+        Запись данных в хранилище.
+        """
+        pass
+
+
+class JsonStorage(BaseStorage):
     def __init__(self, filename: str):
         self.filename = filename
 
