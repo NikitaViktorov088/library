@@ -1,4 +1,5 @@
 import logging
+from typing import List
 from services.book_service import BookService
 from repositories.book_repository import BookRepository
 from repositories.json_storage import JsonStorage
@@ -16,36 +17,37 @@ class Menu:
 
     def show(self):
         try:
-             while True:
-                 print("\nМеню: "
+            while True:
+                print("\nМеню: "
                        "1. Показать все книги  "
                        "2. Добавить книгу  "
                        "3. Удалить книгу  "
                        "4. Поиск книги  "
                        "5. Изменить статус книги  "
                        "0. Выход")
-                 choice = input("Выберите действие: ")
+                choice = input("Выберите действие: ")
 
-                 match choice:
-                     case "1":
-                         self.show_books()
-                     case "2":
-                         self.add_book()
-                     case "3":
-                         self.delete_book()
-                     case "4":
-                         self.search_book()
-                     case "5":
-                         self.change_status()
-                     case "0":
-                         print("Выход...")
-                         logger.info("Пользователь вышел из программы.")
-                         break
-                     case _:
-                         print("Неверный выбор! Попробуйте снова.")
-                         logger.warning("Пользователь выбрал неверный пункт меню.")
+                match choice:
+                    case "1":
+                        self.show_books()
+                    case "2":
+                        self.add_book()
+                    case "3":
+                        self.delete_book()
+                    case "4":
+                        self.search_book()
+                    case "5":
+                        self.change_status()
+                    case "0":
+                        print("Выход...")
+                        logger.info("Пользователь вышел из программы.")
+                        break
+                    case _:
+                        print("Неверный выбор! Попробуйте снова.")
+                        logger.warning("Пользователь выбрал неверный пункт меню.")
         except KeyboardInterrupt as e:
             """Выход из программы Ctrl+C"""
+            print("\nПрограмма завершена пользователем.")
 
     def show_books(self):
         if books := self.book_service.get_all_books():
@@ -61,17 +63,17 @@ class Menu:
             print("Нет книг в библиотеке.")
             logger.info("Нет книг в библиотеке.")
 
-    def add_book(self) -> Book|None:
+    def add_book(self) -> Book | None:
         title = input("Введите название книги: ")
         author = input("Введите автора книги: ")
         year = int(input("Введите год издания книги: "))
         self.book_service.add(title, author, year)
 
-    def delete_book(self):
+    def delete_book(self) -> str | None:
         book_id = input("Введите ID книги для удаления: ")
         self.book_service.delete_book(book_id)
 
-    def search_book(self):
+    def search_book(self) -> List[Book] | None:
         query = input("Введите запрос для поиска книги (по названию или автору): ")
         if books := self.book_service.search_book(query):
             for book in books:
@@ -86,7 +88,7 @@ class Menu:
             print("Книги не найдены.")
             logger.info(f"По запросу '{query}' не было найдено книг.")
 
-    def change_status(self):
+    def change_status(self) -> Book | None:
         book_id = input("Введите ID книги для изменения статуса: ")
         new_status = input("Введите новый статус (в наличии/выдана): ").lower()
         if new_status not in ["в наличии", "выдана"]:
